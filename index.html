@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Healthy &amp; Fresh — Salads Bar &amp; Baguettes | Xalapa</title>
+<meta name="description" content="Arma tu ensalada a tu manera, baguettes frescos, bowls de fruta y licuados proteicos en el centro de Xalapa. Más de 14 años preparando todo al momento. Pide por WhatsApp.">
+<meta property="og:title" content="Healthy & Fresh — Salads Bar & Baguettes Xalapa">
+<meta property="og:description" content="Come rico. Come fresco. Come tú. Ensaladas personalizables y baguettes en el centro de Xalapa.">
+<meta property="og:image" content="assets/logo-redondo.jpg">
+<link rel="icon" type="image/jpeg" href="assets/logo-redondo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Outfit:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="header" id="header">
+  <div class="wrap header-inner">
+    <a href="#inicio" class="brand">
+      <img src="assets/logo-redondo.jpg" alt="Logo Healthy & Fresh" class="brand-logo">
+      <span class="brand-text">Healthy <em>&amp;</em> Fresh</span>
+    </a>
+    <nav class="nav" id="nav">
+      <a href="#inicio" class="nav-link">Inicio</a>
+      <a href="#nosotros" class="nav-link">Nosotros</a>
+      <a href="#menu" class="nav-link">Menú</a>
+      <a href="#ubicacion" class="nav-link">Ubicación</a>
+    </nav>
+    <div class="header-actions">
+      <button class="btn-cart" id="btnCart" aria-label="Abrir carrito">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <span class="cart-badge" id="cartBadge" hidden>0</span>
+      </button>
+      <button class="btn-burger" id="btnBurger" aria-label="Abrir menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="inicio">
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="wrap hero-inner">
+    <div class="hero-copy">
+      <p class="script-accent hero-kicker">Fresco todos los días en Xalapa</p>
+      <h1 class="hero-title">
+        Come rico.<br>
+        Come fresco.<br>
+        <span class="hero-title-accent">Come tú.</span>
+      </h1>
+      <p class="hero-sub">Tú eliges la proteína, el aderezo y cada ingrediente. Nosotros lo preparamos al momento, como lo hacemos desde hace más de 14 años.</p>
+      <div class="hero-ctas">
+        <a href="#menu" class="btn btn-primary" data-goto-builder>Arma tu ensalada
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a href="#menu" class="btn btn-ghost">Ver menú</a>
+      </div>
+      <ul class="hero-badges">
+        <li><span class="dot dot-verde"></span>14+ años de experiencia</li>
+        <li><span class="dot dot-naranja"></span>Preparado al momento</li>
+        <li><span class="dot dot-verde"></span>Pide por WhatsApp</li>
+      </ul>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <div class="hero-card hero-card-main">
+        <img src="assets/logo-redondo.jpg" alt="">
+      </div>
+      <div class="hero-card hero-card-back">
+        <img src="assets/combo.jpg" alt="">
+      </div>
+      <span class="float-emoji fe-1">🥑</span>
+      <span class="float-emoji fe-2">🍅</span>
+      <span class="float-emoji fe-3">🥕</span>
+      <span class="float-emoji fe-4">🍋</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TICKER ============ -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track" id="tickerTrack">
+    <span>🥗 Ensaladas a tu manera</span><span>🥖 Baguettes frescos</span><span>🍓 Bowls de fruta</span><span>💪 Licuados proteicos</span><span>🍋 Jugos naturales</span><span>🌿 Ingredientes del día</span>
+  </div>
+</div>
+
+<!-- ============ NOSOTROS ============ -->
+<section class="section nosotros" id="nosotros">
+  <div class="wrap nosotros-inner">
+    <div class="nosotros-visual reveal izq">
+      <div class="nosotros-img-frame">
+        <img src="assets/menu-ensaladas.jpg" alt="Menú de ensaladas Healthy & Fresh">
+      </div>
+      <div class="nosotros-stamp">
+        <span class="stamp-num">14+</span>
+        <span class="stamp-label">años en Xalapa</span>
+      </div>
+    </div>
+    <div class="nosotros-copy reveal der">
+      <p class="script-accent">Nuestra historia</p>
+      <h2 class="section-title">Comer bien no debería <span class="tachado">ser complicado</span> costarte trabajo</h2>
+      <!-- ═══════════════════════════════════════════════════════════
+           HISTORIA PLACEHOLDER — reemplazar cuando el dueño mande la real.
+           Buscar también "HISTORIA_PLACEHOLDER" en js/app.js si se mueve.
+           ═══════════════════════════════════════════════════════════ -->
+      <p class="nosotros-historia" id="historiaTexto">Desde hace más de 14 años, Healthy &amp; Fresh nació con una idea simple: comer bien no debería ser complicado. En el corazón de Xalapa, preparamos cada ensalada, baguette y jugo al momento, con ingredientes frescos y la libertad de armar tu platillo exactamente como te gusta.</p>
+      <div class="stats">
+        <div class="stat"><span class="stat-num" data-count="14">0</span><span class="stat-suffix">+</span><span class="stat-label">años de sazón</span></div>
+        <div class="stat"><span class="stat-num" data-count="19">0</span><span class="stat-label">ingredientes frescos</span></div>
+        <div class="stat"><span class="stat-num" data-count="11">0</span><span class="stat-label">proteínas a elegir</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ POR QUÉ ELEGIRNOS ============ -->
+<section class="section porque">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="script-accent">Por qué elegirnos</p>
+      <h2 class="section-title">Pocas cosas se sienten tan bien<br>como comer <span class="subrayado">exactamente lo que quieres</span></h2>
+    </div>
+    <div class="porque-grid">
+      <article class="porque-card reveal" style="--d:.0s">
+        <div class="porque-icon pi-verde">🥗</div>
+        <h3>Tú decides todo</h3>
+        <p>Proteína, aderezo e ingredientes: cada ensalada sale distinta porque cada persona es distinta.</p>
+      </article>
+      <article class="porque-card reveal" style="--d:.08s">
+        <div class="porque-icon pi-naranja">⏱️</div>
+        <h3>Fresco al momento</h3>
+        <p>Nada preparado desde ayer. Cortamos, armamos y servimos cuando tú lo pides.</p>
+      </article>
+      <article class="porque-card reveal" style="--d:.16s">
+        <div class="porque-icon pi-verde">🌿</div>
+        <h3>14 años de oficio</h3>
+        <p>Uno de los pocos lugares con este concepto en Xalapa, y el que más tiempo lleva haciéndolo.</p>
+      </article>
+      <article class="porque-card reveal" style="--d:.24s">
+        <div class="porque-icon pi-naranja">💬</div>
+        <h3>Pedir es un mensaje</h3>
+        <p>Armas tu pedido aquí y te lo mandamos listo por WhatsApp. Sin llamadas, sin filas.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MENÚ ============ -->
+<section class="section menu" id="menu">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="script-accent">Nuestro menú</p>
+      <h2 class="section-title">Fresco · Saludable · <span class="hero-title-accent">Delicioso</span></h2>
+    </div>
+
+    <div class="tabs reveal" role="tablist" id="menuTabs">
+      <button class="tab active" role="tab" data-tab="ensaladas">🥗 Arma tu ensalada</button>
+      <button class="tab" role="tab" data-tab="baguettes">🥖 Baguettes</button>
+      <button class="tab" role="tab" data-tab="bowls">🍓 Bowls de fruta</button>
+      <button class="tab" role="tab" data-tab="licuados">🥤 Licuados</button>
+      <button class="tab" role="tab" data-tab="jugos">🍋 Jugos y bebidas</button>
+      <button class="tab" role="tab" data-tab="combos">🍽️ Combos</button>
+    </div>
+
+    <!-- ——— TAB: CONSTRUCTOR DE ENSALADAS ——— -->
+    <div class="tab-panel active" id="panel-ensaladas">
+      <div class="builder">
+        <div class="builder-steps">
+
+          <div class="bstep" id="stepCombo">
+            <div class="bstep-head">
+              <span class="bstep-num">1</span>
+              <div><h3>Elige tu combinación</h3><p>El tamaño de tu antojo</p></div>
+            </div>
+            <div class="combo-grid" id="comboGrid"></div>
+          </div>
+
+          <div class="bstep bstep-locked" id="stepProteinas">
+            <div class="bstep-head">
+              <span class="bstep-num">2</span>
+              <div><h3>Elige tu proteína</h3><p>La estrella del plato</p></div>
+              <span class="bstep-counter" id="protCounter">0/1</span>
+            </div>
+            <div class="chip-grid" id="protGrid"></div>
+            <p class="bstep-hint">¿Quieres más? La proteína extra cuesta <strong>+$30</strong>.</p>
+          </div>
+
+          <div class="bstep bstep-locked" id="stepAderezo">
+            <div class="bstep-head">
+              <span class="bstep-num">3</span>
+              <div><h3>Elige tu aderezo</h3><p>El toque que lo une todo</p></div>
+              <span class="bstep-counter" id="aderezoCounter">0/1</span>
+            </div>
+            <div class="chip-grid" id="aderezoGrid"></div>
+          </div>
+
+          <div class="bstep bstep-locked" id="stepIngredientes">
+            <div class="bstep-head">
+              <span class="bstep-num">4</span>
+              <div><h3>Elige tus ingredientes</h3><p>Aquí se pone divertido</p></div>
+              <span class="bstep-counter" id="ingCounter">0/2</span>
+            </div>
+            <div class="chip-grid" id="ingGrid"></div>
+            <p class="bstep-hint">¿No te decides? El ingrediente extra cuesta <strong>+$25</strong>.</p>
+          </div>
+
+        </div>
+
+        <!-- Resumen sticky -->
+        <aside class="builder-summary" id="builderSummary">
+          <div class="bsum-bowl" id="bsumBowl">🥣</div>
+          <h3 class="bsum-title">Tu ensalada</h3>
+          <div class="bsum-body" id="bsumBody">
+            <p class="bsum-empty">Elige una combinación para empezar 👆</p>
+          </div>
+          <div class="bsum-total-row" id="bsumTotalRow" hidden>
+            <span>Total</span>
+            <span class="bsum-total" id="bsumTotal">$0</span>
+          </div>
+          <button class="btn btn-primary bsum-add" id="btnAddSalad" disabled>Agregar al carrito</button>
+          <button class="bsum-reset" id="btnResetSalad" hidden>Empezar de nuevo</button>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ——— TABS DE PRODUCTOS (se llenan por JS) ——— -->
+    <div class="tab-panel" id="panel-baguettes"></div>
+    <div class="tab-panel" id="panel-bowls"></div>
+    <div class="tab-panel" id="panel-licuados"></div>
+    <div class="tab-panel" id="panel-jugos"></div>
+    <div class="tab-panel" id="panel-combos"></div>
+  </div>
+</section>
+
+<!-- ============ UBICACIÓN ============ -->
+<section class="section ubicacion" id="ubicacion">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="script-accent">Visítanos</p>
+      <h2 class="section-title">En el corazón del <span class="subrayado">centro de Xalapa</span></h2>
+    </div>
+    <div class="ubi-grid">
+      <div class="ubi-map reveal izq">
+        <a class="ubi-map-fallback" href="https://maps.app.goo.gl/fEzeAEY9GWDrJMjE8" target="_blank" rel="noopener">
+          <span>📍</span>
+          <strong>Carrillo Puerto 1-A, esquina Enríquez</strong>
+          <em>Toca para abrir en Google Maps</em>
+        </a>
+        <iframe
+          title="Mapa de Healthy & Fresh Xalapa"
+          src="https://www.google.com/maps?q=Healthy%20%26%20Fresh%20Salads%20Bar%20Carrillo%20Puerto%201%20Xalapa&output=embed"
+          loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+      </div>
+      <div class="ubi-info reveal der">
+        <div class="ubi-card">
+          <span class="ubi-icon">📍</span>
+          <div>
+            <h3>Dirección</h3>
+            <p>Carrillo Puerto 1-A, esquina Enríquez<br>Centro, Xalapa, Ver. C.P. 91000</p>
+            <a href="https://maps.app.goo.gl/fEzeAEY9GWDrJMjE8" target="_blank" rel="noopener" class="ubi-link">Abrir en Google Maps →</a>
+          </div>
+        </div>
+        <div class="ubi-card">
+          <span class="ubi-icon">🕣</span>
+          <div>
+            <h3>Horario</h3>
+            <p><strong>Lunes a sábado</strong> · 8:30 AM – 5:00 PM<br><strong>Domingo</strong> · Cerrado</p>
+            <p class="ubi-open-badge" id="openBadge"></p>
+          </div>
+        </div>
+        <div class="ubi-card">
+          <span class="ubi-icon">💬</span>
+          <div>
+            <h3>Pedidos y dudas</h3>
+            <p>WhatsApp: <a href="https://wa.me/522282787878" target="_blank" rel="noopener" class="ubi-link">228 278 7878</a></p>
+            <div class="ubi-socials">
+              <a href="https://www.instagram.com/healthy_fresh_xalapa" target="_blank" rel="noopener" aria-label="Instagram">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor" stroke="none"/></svg>
+                Instagram
+              </a>
+              <a href="https://www.facebook.com/HealthyfreshSaladsBarXalapa/" target="_blank" rel="noopener" aria-label="Facebook">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                Facebook
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA FINAL ============ -->
+<section class="cta-final">
+  <div class="wrap cta-final-inner reveal">
+    <p class="script-accent script-claro">¿Se te antojó?</p>
+    <h2>Tu ensalada ya sabe cómo la quieres.<br>Solo falta armarla.</h2>
+    <a href="#menu" class="btn btn-blanco" data-goto-builder>Arma tu ensalada ahora</a>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <img src="assets/logo-redondo.jpg" alt="Healthy & Fresh">
+      <p>Healthy &amp; Fresh<br><span>Salads Bar &amp; Baguettes · Xalapa</span></p>
+    </div>
+    <p class="footer-tag script-accent script-claro">¡Come bien, siéntete bien!</p>
+    <p class="footer-copy">© <span id="year"></span> Healthy &amp; Fresh Xalapa · Hecho con 🥬 en Xalapa</p>
+  </div>
+</footer>
+
+<!-- ============ CARRITO (drawer) ============ -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<aside class="cart-drawer" id="cartDrawer" aria-label="Carrito de compra">
+  <div class="cart-head">
+    <h3>Tu pedido</h3>
+    <button class="cart-close" id="cartClose" aria-label="Cerrar carrito">✕</button>
+  </div>
+
+  <div class="cart-view" id="cartViewItems">
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-foot" id="cartFoot" hidden>
+      <div class="cart-total-row"><span>Total</span><span id="cartTotal">$0</span></div>
+      <button class="btn btn-primary cart-checkout" id="btnCheckout">Continuar pedido</button>
+    </div>
+    <div class="cart-empty" id="cartEmpty">
+      <span>🛒</span>
+      <p>Tu carrito está vacío.<br>El menú te está esperando…</p>
+      <button class="btn btn-ghost" id="btnGoMenu">Ver menú</button>
+    </div>
+  </div>
+
+  <div class="cart-view" id="cartViewCheckout" hidden>
+    <form class="checkout-form" id="checkoutForm" novalidate>
+      <label>Tu nombre
+        <input type="text" name="nombre" id="fNombre" placeholder="¿Cómo te llamas?" autocomplete="name" required>
+      </label>
+      <label>Tu teléfono
+        <input type="tel" name="telefono" id="fTelefono" placeholder="10 dígitos" autocomplete="tel" inputmode="numeric" required>
+      </label>
+      <fieldset class="entrega-field">
+        <legend>¿Cómo lo quieres?</legend>
+        <div class="entrega-opts">
+          <label class="entrega-opt"><input type="radio" name="entrega" value="tienda" checked><span>🏪 Recoger en tienda</span></label>
+          <label class="entrega-opt"><input type="radio" name="entrega" value="domicilio"><span>🛵 A domicilio</span></label>
+        </div>
+      </fieldset>
+      <label id="direccionField" hidden>Dirección de entrega
+        <input type="text" name="direccion" id="fDireccion" placeholder="Calle, número, colonia y referencias">
+      </label>
+      <label>Notas (opcional)
+        <textarea name="notas" id="fNotas" rows="2" placeholder="Sin cebolla, aderezo aparte…"></textarea>
+      </label>
+      <div class="cart-total-row"><span>Total</span><span id="checkoutTotal">$0</span></div>
+      <button type="submit" class="btn btn-wsp" id="btnSendWsp">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.7 14.9L2 22l5.3-1.4A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.6-6.1c-.3-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.3-.6.8-.8 1-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4 0-.5.2-.7l.4-.5c.1-.2.1-.3.2-.5 0-.2 0-.4-.1-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3a2.8 2.8 0 0 0-.9 2.1c0 1.2.9 2.4 1 2.6.1.2 1.8 2.7 4.3 3.8.6.3 1.1.4 1.5.6.6.2 1.2.2 1.6.1.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2 0-.1-.2-.2-.5-.3z"/></svg>
+        Enviar pedido por WhatsApp
+      </button>
+      <button type="button" class="bsum-reset" id="btnBackCart">← Volver al carrito</button>
+      <details class="transfer-details">
+        <summary>💳 ¿Prefieres pagar por transferencia?</summary>
+        <img src="assets/tarjeta-transferencias.jpg" alt="Datos para transferencia bancaria" loading="lazy">
+      </details>
+    </form>
+  </div>
+</aside>
+
+<!-- ============ WHATSAPP FAB ============ -->
+<a href="https://wa.me/522282787878" target="_blank" rel="noopener" class="wsp-fab" aria-label="Escríbenos por WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.7 14.9L2 22l5.3-1.4A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.6-6.1c-.3-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.3-.6.8-.8 1-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4 0-.5.2-.7l.4-.5c.1-.2.1-.3.2-.5 0-.2 0-.4-.1-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3a2.8 2.8 0 0 0-.9 2.1c0 1.2.9 2.4 1 2.6.1.2 1.8 2.7 4.3 3.8.6.3 1.1.4 1.5.6.6.2 1.2.2 1.6.1.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2 0-.1-.2-.2-.5-.3z"/></svg>
+</a>
+
+<!-- ============ TOAST ============ -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- ============ LIGHTBOX MENÚ ============ -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Cerrar">✕</button>
+  <img src="" alt="Menú" id="lightboxImg">
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

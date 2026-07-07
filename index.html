@@ -26,7 +26,7 @@
     <nav class="nav" id="nav">
       <a href="#inicio" class="nav-link">Inicio</a>
       <a href="#nosotros" class="nav-link">Nosotros</a>
-      <a href="#menu" class="nav-link">Menú</a>
+      <a href="menu.html" class="nav-link" data-seccion="menu">Menú</a>
       <a href="#ubicacion" class="nav-link">Ubicación</a>
     </nav>
     <div class="header-actions">
@@ -55,10 +55,10 @@
       </h1>
       <p class="hero-sub">Tú eliges la proteína, el aderezo y cada ingrediente. Nosotros lo preparamos al momento, como lo hacemos desde hace más de 14 años.</p>
       <div class="hero-ctas">
-        <a href="#menu" class="btn btn-primary" data-goto-builder>Arma tu ensalada
+        <a href="menu.html" class="btn btn-primary">Arma tu ensalada
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </a>
-        <a href="#menu" class="btn btn-ghost">Ver menú</a>
+        <a href="menu.html" class="btn btn-ghost">Ver menú</a>
       </div>
       <ul class="hero-badges">
         <li><span class="dot dot-verde"></span>14+ años de experiencia</li>
@@ -149,90 +149,15 @@
   </div>
 </section>
 
-<!-- ============ MENÚ ============ -->
-<section class="section menu" id="menu">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <p class="script-accent">Nuestro menú</p>
-      <h2 class="section-title">Fresco · Saludable · <span class="hero-title-accent">Delicioso</span></h2>
-    </div>
-
-    <div class="tabs reveal" role="tablist" id="menuTabs">
-      <button class="tab active" role="tab" data-tab="ensaladas">🥗 Arma tu ensalada</button>
-      <button class="tab" role="tab" data-tab="baguettes">🥖 Baguettes</button>
-      <button class="tab" role="tab" data-tab="bowls">🍓 Bowls de fruta</button>
-      <button class="tab" role="tab" data-tab="licuados">🥤 Licuados</button>
-      <button class="tab" role="tab" data-tab="jugos">🍋 Jugos y bebidas</button>
-      <button class="tab" role="tab" data-tab="combos">🍽️ Combos</button>
-    </div>
-
-    <!-- ——— TAB: CONSTRUCTOR DE ENSALADAS ——— -->
-    <div class="tab-panel active" id="panel-ensaladas">
-      <div class="builder">
-        <div class="builder-steps">
-
-          <div class="bstep" id="stepCombo">
-            <div class="bstep-head">
-              <span class="bstep-num">1</span>
-              <div><h3>Elige tu combinación</h3><p>El tamaño de tu antojo</p></div>
-            </div>
-            <div class="combo-grid" id="comboGrid"></div>
-          </div>
-
-          <div class="bstep bstep-locked" id="stepProteinas">
-            <div class="bstep-head">
-              <span class="bstep-num">2</span>
-              <div><h3>Elige tu proteína</h3><p>La estrella del plato</p></div>
-              <span class="bstep-counter" id="protCounter">0/1</span>
-            </div>
-            <div class="chip-grid" id="protGrid"></div>
-            <p class="bstep-hint">¿Quieres más? La proteína extra cuesta <strong>+$30</strong>.</p>
-          </div>
-
-          <div class="bstep bstep-locked" id="stepAderezo">
-            <div class="bstep-head">
-              <span class="bstep-num">3</span>
-              <div><h3>Elige tu aderezo</h3><p>El toque que lo une todo</p></div>
-              <span class="bstep-counter" id="aderezoCounter">0/1</span>
-            </div>
-            <div class="chip-grid" id="aderezoGrid"></div>
-          </div>
-
-          <div class="bstep bstep-locked" id="stepIngredientes">
-            <div class="bstep-head">
-              <span class="bstep-num">4</span>
-              <div><h3>Elige tus ingredientes</h3><p>Aquí se pone divertido</p></div>
-              <span class="bstep-counter" id="ingCounter">0/2</span>
-            </div>
-            <div class="chip-grid" id="ingGrid"></div>
-            <p class="bstep-hint">¿No te decides? El ingrediente extra cuesta <strong>+$25</strong>.</p>
-          </div>
-
-        </div>
-
-        <!-- Resumen sticky -->
-        <aside class="builder-summary" id="builderSummary">
-          <div class="bsum-bowl" id="bsumBowl">🥣</div>
-          <h3 class="bsum-title">Tu ensalada</h3>
-          <div class="bsum-body" id="bsumBody">
-            <p class="bsum-empty">Elige una combinación para empezar 👆</p>
-          </div>
-          <div class="bsum-total-row" id="bsumTotalRow" hidden>
-            <span>Total</span>
-            <span class="bsum-total" id="bsumTotal">$0</span>
-          </div>
-          <button class="btn btn-primary bsum-add" id="btnAddSalad" disabled>Agregar al carrito</button>
-          <button class="bsum-reset" id="btnResetSalad" hidden>Empezar de nuevo</button>
-        </aside>
-      </div>
-    </div>
-
-    <!-- ——— TABS DE PRODUCTOS (se llenan por JS) ——— -->
-    <div class="tab-panel" id="panel-baguettes"></div>
-    <div class="tab-panel" id="panel-bowls"></div>
-    <div class="tab-panel" id="panel-licuados"></div>
-    <div class="tab-panel" id="panel-jugos"></div>
-    <div class="tab-panel" id="panel-combos"></div>
+<!-- ============ MENÚ (ahora en su propia página: menu.html) ============ -->
+<section class="section menu-cta" id="menu">
+  <div class="wrap section-head reveal">
+    <p class="script-accent">Nuestro menú</p>
+    <h2 class="section-title">Fresco · Saludable · <span class="hero-title-accent">Delicioso</span></h2>
+    <p class="menu-cta-sub">Arma tu ensalada a tu manera, elige tu baguette, bowl o licuado, y manda tu pedido por WhatsApp.</p>
+    <a href="menu.html" class="btn btn-primary">Ver el menú completo
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
   </div>
 </section>
 
@@ -299,7 +224,7 @@
   <div class="wrap cta-final-inner reveal">
     <p class="script-accent script-claro">¿Se te antojó?</p>
     <h2>Tu ensalada ya sabe cómo la quieres.<br>Solo falta armarla.</h2>
-    <a href="#menu" class="btn btn-blanco" data-goto-builder>Arma tu ensalada ahora</a>
+    <a href="menu.html" class="btn btn-blanco">Arma tu ensalada ahora</a>
   </div>
 </section>
 
@@ -378,12 +303,6 @@
 
 <!-- ============ TOAST ============ -->
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-<!-- ============ LIGHTBOX MENÚ ============ -->
-<div class="lightbox" id="lightbox">
-  <button class="lightbox-close" id="lightboxClose" aria-label="Cerrar">✕</button>
-  <img src="" alt="Menú" id="lightboxImg">
-</div>
 
 <script src="js/app.js"></script>
 </body>

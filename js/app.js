@@ -249,12 +249,13 @@ $("#btnCheckout").addEventListener("click", () => {
 });
 $("#btnBackCart").addEventListener("click", mostrarVistaCarrito);
 
-/* Mostrar campo dirección solo si es a domicilio */
+/* Dirección solo a domicilio; el teléfono deja de ser opcional a domicilio */
 $$('input[name="entrega"]').forEach((radio) =>
   radio.addEventListener("change", () => {
     const domicilio = $('input[name="entrega"]:checked').value === "domicilio";
     $("#direccionField").hidden = !domicilio;
     $("#fDireccion").required = domicilio;
+    $("#telOpcional").hidden = domicilio;
   })
 );
 
@@ -272,7 +273,10 @@ $("#checkoutForm").addEventListener("submit", (e) => {
   let valido = true;
   $("#fNombre").classList.toggle("error", !nombre);
   if (!nombre) valido = false;
-  const telOk = telefono.length === 10;
+  /* Teléfono: obligatorio solo a domicilio; si lo escriben, deben ser 10 dígitos */
+  const telOk = entrega === "domicilio"
+    ? telefono.length === 10
+    : telefono.length === 0 || telefono.length === 10;
   $("#fTelefono").classList.toggle("error", !telOk);
   if (!telOk) valido = false;
   const dirOk = entrega !== "domicilio" || direccion.length > 0;
@@ -284,8 +288,12 @@ $("#checkoutForm").addEventListener("submit", (e) => {
   lineas.push("Pedido - Healthy & Fresh");
   lineas.push("");
   lineas.push(`Nombre: ${nombre}`);
-  lineas.push(`Teléfono: ${telefono}`);
-  lineas.push(`Entrega: ${entrega === "domicilio" ? `A domicilio: ${direccion}` : "Recoger en tienda"}`);
+  if (telefono) lineas.push(`Teléfono: ${telefono}`);
+  const textoEntrega =
+    entrega === "domicilio" ? `A domicilio: ${direccion}` :
+    entrega === "aqui"      ? "Para comer aquí" :
+                              "Recoger en tienda";
+  lineas.push(`Entrega: ${textoEntrega}`);
   lineas.push("");
   lineas.push("PRODUCTOS:");
   carrito.forEach((i) => {
@@ -309,6 +317,7 @@ $("#checkoutForm").addEventListener("submit", (e) => {
   pintarCarrito();
   $("#checkoutForm").reset();
   $("#direccionField").hidden = true;
+  $("#telOpcional").hidden = false; // el reset vuelve a "Recoger en tienda"
   mostrarVistaCarrito();
   cerrarCarrito();
   toast("💬 Pedido enviado. ¡Revisa WhatsApp!");

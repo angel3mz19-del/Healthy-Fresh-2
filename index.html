@@ -66,17 +66,12 @@
         <li><span class="dot dot-verde"></span>Pide por WhatsApp</li>
       </ul>
     </div>
-    <div class="hero-visual" aria-hidden="true">
-      <div class="hero-card hero-card-main">
-        <img src="assets/logo-redondo.jpg" alt="">
-      </div>
-      <div class="hero-card hero-card-back">
-        <img src="assets/combo.jpg" alt="">
-      </div>
-      <span class="float-emoji fe-1">🥑</span>
-      <span class="float-emoji fe-2">🍅</span>
-      <span class="float-emoji fe-3">🥕</span>
-      <span class="float-emoji fe-4">🍋</span>
+    <div class="hero-visual">
+      <figure class="hero-foto">
+        <img src="assets/foto-preparacion.jpg" alt="Preparando ensaladas frescas al momento en la cocina de Healthy & Fresh" fetchpriority="high">
+        <figcaption class="hero-foto-chip">👨‍🍳 Preparado al momento, todos los días</figcaption>
+      </figure>
+      <img src="assets/foto-ensalada.jpg" alt="" class="hero-foto-mini" aria-hidden="true">
     </div>
   </div>
 </section>
@@ -88,12 +83,40 @@
   </div>
 </div>
 
+<!-- ============ NUESTRA COCINA (fotos reales) ============ -->
+<section class="section cocina">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="script-accent">Directo de nuestra cocina</p>
+      <h2 class="section-title">Así se ve lo que <span class="subrayado">preparamos hoy</span></h2>
+    </div>
+    <div class="cocina-grid">
+      <figure class="cocina-item ci-grande reveal" style="--d:.0s">
+        <img src="assets/foto-ensalada.jpg" alt="Ensalada con pollo BBQ, queso panela, jamón y semillas de girasol" loading="lazy">
+        <figcaption>🥗 Ensaladas</figcaption>
+      </figure>
+      <figure class="cocina-item reveal" style="--d:.08s">
+        <img src="assets/foto-baguette.jpg" alt="Baguette con queso gratinado acompañado de ensalada fresca" loading="lazy">
+        <figcaption>🥖 Baguettes</figcaption>
+      </figure>
+      <figure class="cocina-item reveal" style="--d:.16s">
+        <img src="assets/foto-pastas.jpg" alt="Ensalada de pasta con pollo crujiente, crotones y arándanos" loading="lazy">
+        <figcaption>🍝 Pastas</figcaption>
+      </figure>
+      <figure class="cocina-item ci-ancha reveal" style="--d:.24s">
+        <img src="assets/foto-fresas.jpg" alt="Ensaladas con fresa y manzana de temporada recién preparadas" loading="lazy">
+        <figcaption>🍓 Fruta de temporada</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
 <!-- ============ NOSOTROS ============ -->
 <section class="section nosotros" id="nosotros">
   <div class="wrap nosotros-inner">
     <div class="nosotros-visual reveal izq">
       <div class="nosotros-img-frame">
-        <img src="assets/menu-ensaladas.jpg" alt="Menú de ensaladas Healthy & Fresh">
+        <img src="assets/foto-local.jpg" alt="Fachada de Healthy & Fresh en el centro de Xalapa" loading="lazy">
       </div>
       <div class="nosotros-stamp">
         <span class="stamp-num">14+</span>
@@ -219,6 +242,21 @@
   </div>
 </section>
 
+<!-- ============ CALIFICA TU EXPERIENCIA ============ -->
+<section class="section resenas">
+  <div class="wrap resenas-inner reveal">
+    <p class="script-accent">¿Ya nos visitaste?</p>
+    <h2 class="section-title">Califica tu experiencia</h2>
+    <div class="estrellas" aria-hidden="true">
+      <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+    </div>
+    <p class="resenas-texto">Tu opinión nos ayuda a que más gente en Xalapa coma rico y fresco. Si disfrutaste tu visita, cuéntalo en Google: nos hace el día y ayuda a otros a encontrarnos.</p>
+    <a class="btn btn-primary" href="https://www.google.com/search?sca_esv=d6d0064a5d54de7c&sxsrf=APpeQnuedTucKvfTbcXgITsa1fDwYiSjvA:1783536309695&si=APenkKm7iecQ4G6P-TsbSMFKIQtv3EFIqRAFw-i8uEbk55Z-_77eX_Z2VtYDU9SZ-kd8m-_StmxxOeFMXtK0Vvi8CdtuhdqgBJ7IBDxLDfmdd9tjNBKKCY53Tiq6YvdtUhqUTjn9MObQG2bUS7dJ7oMeTKxXaBsGI3HeuiSBpr04Exu_rVj7JEo%3D&q=Healthy+%26+Fresh+salads+bar+Xalapa+Opiniones&sa=X&ved=2ahUKEwjtrrvB3sOVAxU45ckDHaQoHnIQ0bkNegQIKxAF&cshid=1783536441859122&biw=1536&bih=695&dpr=1.25#lrd=0x85db320063a5e3db:0x9ec20d7961b27f7f,3,,,," target="_blank" rel="noopener">
+      ⭐ Dejar mi reseña en Google
+    </a>
+  </div>
+</section>
+
 <!-- ============ CTA FINAL ============ -->
 <section class="cta-final">
   <div class="wrap cta-final-inner reveal">
@@ -266,13 +304,15 @@
       <label>Tu nombre
         <input type="text" name="nombre" id="fNombre" placeholder="¿Cómo te llamas?" autocomplete="name" required>
       </label>
-      <label>Tu teléfono
-        <input type="tel" name="telefono" id="fTelefono" placeholder="10 dígitos" autocomplete="tel" inputmode="numeric" required>
+      <label>
+        <span class="campo-titulo">Tu teléfono <em class="campo-opcional" id="telOpcional">(opcional)</em></span>
+        <input type="tel" name="telefono" id="fTelefono" placeholder="10 dígitos" autocomplete="tel" inputmode="numeric">
       </label>
       <fieldset class="entrega-field">
         <legend>¿Cómo lo quieres?</legend>
         <div class="entrega-opts">
           <label class="entrega-opt"><input type="radio" name="entrega" value="tienda" checked><span>🏪 Recoger en tienda</span></label>
+          <label class="entrega-opt"><input type="radio" name="entrega" value="aqui"><span>🍽️ Comer aquí</span></label>
           <label class="entrega-opt"><input type="radio" name="entrega" value="domicilio"><span>🛵 A domicilio</span></label>
         </div>
       </fieldset>
@@ -288,10 +328,6 @@
         Enviar pedido por WhatsApp
       </button>
       <button type="button" class="bsum-reset" id="btnBackCart">← Volver al carrito</button>
-      <details class="transfer-details">
-        <summary>💳 ¿Prefieres pagar por transferencia?</summary>
-        <img src="assets/tarjeta-transferencias.jpg" alt="Datos para transferencia bancaria" loading="lazy">
-      </details>
     </form>
   </div>
 </aside>

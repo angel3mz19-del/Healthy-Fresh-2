@@ -508,7 +508,7 @@ body.con-cart-bar .toast{ bottom:100px; }
     gap:16px;
     padding:12px 18px;
     border-radius:999px;
-    margin-right:66px; /* deja libre el botón flotante de WhatsApp */
+    
   }
   .bsum-bowl, .bsum-title, .bsum-body, .bsum-reset{ display:none; }
   .builder-summary .bsum-total-row{

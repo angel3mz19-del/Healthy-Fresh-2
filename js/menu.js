@@ -64,6 +64,23 @@ const BAGUETTES = [
   { nombre: "Carne Arrachera",       precio: 135, emoji: "🥩", desc: "Arrachera a la plancha, lechuga, cebolla caramelizada, tomate, guacamole y queso manchego.", nuevo: true },
 ];
 
+/* Sándwiches (pan integral / de caja).
+   NOTA: sin fotografías reales de estos platillos por ahora; se usan
+   emoji igual que en las tarjetas de baguettes. Para agregar fotos
+   después, seguir el patrón de la tarjeta de combos (usar <img class="prod-img">). */
+const CLUB_SANDWICH = {
+  nombre: "Club Sandwich",
+  precio: 100,
+  emoji: "🥪",
+  desc: "En pan integral: jamón de pavo, pechuga, queso manchego, lechuga, tomate y cebolla.",
+};
+
+const SANDWICH = {
+  precio: 50,
+  proteinas: ["Panela", "Jamón de pavo", "Pollo"],
+  incluye: ["Espinaca", "Zanahoria", "Pepino", "Tomate", "Cebolla"],
+};
+
 const BOWL_FRUTAS = {
   frutas:   ["Piña", "Papaya", "Melón", "Plátano", "Manzana", "Arándanos"],
   toppings: ["Granola", "Ajonjolí garapiñado", "Coco rallado"],
@@ -358,7 +375,7 @@ $("#btnAddSalad").addEventListener("click", () => {
 $("#panel-baguettes").innerHTML = `
   <p class="prod-intro">
     Pan crujiente, ingredientes frescos y el relleno bien servido.
-    <br><button class="ver-menu-btn" type="button" data-lightbox="assets/menu-baguettes.jpg">📸 Ver el menú con fotos →</button>
+    <br><button class="ver-menu-btn" type="button" data-lightbox="assets/menu-baguettes.webp">📸 Ver el menú con fotos →</button>
   </p>
   <div class="prod-grid">
     ${BAGUETTES.map(
@@ -381,6 +398,70 @@ $("#panel-baguettes").addEventListener("click", (e) => {
   if (!btn) return;
   const b = BAGUETTES[+btn.dataset.baguette];
   agregarAlCarrito({ nombre: `Baguette ${b.nombre}`, detalles: [], precio: b.precio });
+});
+
+/* — Sándwiches — */
+const sandwichState = { proteina: null };
+
+$("#panel-sandwiches").innerHTML = `
+  <div class="prod-grid" style="max-width:420px; margin:0 auto 24px;">
+    <article class="prod-card">
+      <span class="prod-emoji">${CLUB_SANDWICH.emoji}</span>
+      <h3 class="prod-name">${CLUB_SANDWICH.nombre}</h3>
+      <p class="prod-desc">${CLUB_SANDWICH.desc}</p>
+      <div class="prod-foot">
+        <span class="prod-price">${dinero(CLUB_SANDWICH.precio)}</span>
+        <button class="prod-add" type="button" data-club>Agregar +</button>
+      </div>
+    </article>
+  </div>
+  <div class="mini-builder">
+    <div class="mb-head">
+      <h3>🥪 Arma tu sándwich</h3>
+      <span class="mb-price">${dinero(SANDWICH.precio)}</span>
+    </div>
+    <p class="mb-sub">Elige tu proteína. Todas incluyen espinaca, zanahoria, pepino, tomate y cebolla.</p>
+    <div class="mb-group">
+      <div class="mb-group-title">Proteína <span class="bstep-counter" id="sandProtCounter">0/1</span></div>
+      <div class="chip-grid" id="sandProtGrid">${SANDWICH.proteinas.map(chipHTML).join("")}</div>
+    </div>
+    <div class="mb-foot">
+      <button class="btn btn-primary" type="button" id="btnAddSand" disabled>Agregar al carrito</button>
+    </div>
+  </div>`;
+
+function actualizarSandwich() {
+  pintarChips($("#sandProtGrid"), sandwichState.proteina ? [sandwichState.proteina] : [], 1);
+  pintarContador($("#sandProtCounter"), sandwichState.proteina ? 1 : 0, 1);
+  $("#btnAddSand").disabled = !sandwichState.proteina;
+}
+
+$("#sandProtGrid").addEventListener("click", (e) => {
+  const chip = e.target.closest(".chip");
+  if (!chip) return;
+  sandwichState.proteina = sandwichState.proteina === chip.dataset.nombre ? null : chip.dataset.nombre;
+  chip.classList.add("pop");
+  actualizarSandwich();
+});
+
+$("#btnAddSand").addEventListener("click", () => {
+  agregarAlCarrito({
+    nombre: "Sándwich",
+    detalles: [
+      `Proteína: ${sandwichState.proteina}`,
+      `Incluye: ${SANDWICH.incluye.join(", ")}`,
+    ],
+    precio: SANDWICH.precio,
+    unico: true,
+  });
+  sandwichState.proteina = null;
+  actualizarSandwich();
+});
+
+$("#panel-sandwiches").addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-club]");
+  if (!btn) return;
+  agregarAlCarrito({ nombre: CLUB_SANDWICH.nombre, detalles: [], precio: CLUB_SANDWICH.precio });
 });
 
 /* — Bowl de frutas (mini-constructor) — */
@@ -502,7 +583,7 @@ const licState = { sabor: null, proteina: null, extras: [] };
 $("#panel-licuados").innerHTML = `
   <p class="prod-intro">
     Licuados a base de leche deslactosada, con la proteína que tu rutina pide.
-    <br><button class="ver-menu-btn" type="button" data-lightbox="assets/menu-licuados.jpg">📸 Ver el menú Healthy Protein →</button>
+    <br><button class="ver-menu-btn" type="button" data-lightbox="assets/menu-licuados.webp">📸 Ver el menú Healthy Protein →</button>
   </p>
   <div class="mini-builder">
     <div class="mb-head">
@@ -618,7 +699,7 @@ $("#panel-jugos").addEventListener("click", (e) => {
 $("#panel-combos").innerHTML = `
   <div class="prod-grid" style="max-width:420px; margin:0 auto;">
     <article class="prod-card">
-      <img src="assets/combo.jpg" alt="Combo: ensalada mediana + agua de sabor" class="prod-img" loading="lazy">
+      <img src="assets/combo.webp" alt="Combo: ensalada mediana + agua de sabor" class="prod-img" loading="lazy" decoding="async">
       <h3 class="prod-name">Arma tu combo</h3>
       <p class="prod-desc">Ensalada mediana (1 proteína + 3 ingredientes) + agua de sabor. Personalízala igual que una ensalada individual.</p>
       <div class="prod-foot">
@@ -667,3 +748,4 @@ $("#cartBarBtn").addEventListener("click", abrirCarrito);
 actualizarBuilder();
 actualizarBowl();
 actualizarLicuado();
+actualizarSandwich();

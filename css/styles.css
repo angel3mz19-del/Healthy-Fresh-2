@@ -129,20 +129,22 @@ input,textarea,select{ font-family:inherit; font-size:1rem; }
 .btn-wsp:hover{ background:#1eb958; transform:translateY(-2px); }
 .btn-wsp svg{ width:22px; height:22px; }
 
-/* Animación reveal al hacer scroll */
-.reveal{
+/* Animación reveal al hacer scroll.
+   Solo se oculta contenido si hay JS (clase .js en <html>): si el script
+   no carga, la página completa queda visible y usable. */
+.js .reveal{
   opacity:0;
   transform:translateY(26px);
   transition:opacity .7s ease var(--d, 0s), transform .7s ease var(--d, 0s);
 }
-.reveal.izq{ transform:translateX(-30px); }
-.reveal.der{ transform:translateX(30px); }
-.reveal.visible{ opacity:1; transform:none; }
+.js .reveal.izq{ transform:translateX(-30px); }
+.js .reveal.der{ transform:translateX(30px); }
+.js .reveal.visible{ opacity:1; transform:none; }
 
 @media (prefers-reduced-motion: reduce){
-  .reveal{ opacity:1; transform:none; transition:none; }
+  .reveal, .js .reveal{ opacity:1; transform:none; transition:none; }
   html{ scroll-behavior:auto; }
-  .estrellas span{ opacity:1; transform:none; animation:none !important; }
+  .estrellas span, .js .estrellas span{ opacity:1; transform:none; animation:none !important; }
   .hero-foto, .hero-foto-mini{ animation:none; }
 }
 
@@ -632,7 +634,7 @@ input,textarea,select{ font-family:inherit; font-size:1rem; }
   margin:18px 0 20px;
   text-shadow:0 6px 18px rgba(245,130,31,.35);
 }
-.estrellas span{
+.js .estrellas span{
   display:inline-block;
   opacity:0;
   transform:scale(.3) rotate(-20deg);
@@ -657,7 +659,7 @@ input,textarea,select{ font-family:inherit; font-size:1rem; }
 .cta-final{
   background:
     linear-gradient(135deg, rgba(58,107,44,.90) 0%, rgba(35,63,26,.94) 100%),
-    url("../assets/foto-ensalada.jpg") center/cover no-repeat;
+    url("../assets/foto-ensalada.webp") center/cover no-repeat;
   color:#fff;
   padding:88px 0;
   position:relative;

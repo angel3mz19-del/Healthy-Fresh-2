@@ -8,12 +8,16 @@
 <meta property="og:title" content="Menú — Healthy & Fresh Xalapa">
 <meta property="og:description" content="Arma tu ensalada, elige tu baguette y pide por WhatsApp.">
 <meta property="og:image" content="assets/logo-redondo.jpg">
-<link rel="icon" type="image/jpeg" href="assets/logo-redondo.jpg">
+<link rel="icon" type="image/png" href="assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Outfit:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css">
-<link rel="stylesheet" href="css/menu.css">
+<link rel="stylesheet" href="css/styles.min.css">
+<link rel="stylesheet" href="css/menu.min.css">
+<!-- Fuentes sin bloquear el primer render: mientras bajan se usa la fuente del sistema -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Outfit:wght@400;500;600;700&family=Caveat:wght@700&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Outfit:wght@400;500;600;700&family=Caveat:wght@700&display=swap"></noscript>
+<!-- Marca que hay JS: sin él, las animaciones de aparición se desactivan y todo queda visible -->
+<script>document.documentElement.classList.add("js");</script>
 </head>
 <body class="pagina-menu">
 
@@ -21,7 +25,7 @@
 <header class="header" id="header">
   <div class="wrap header-inner">
     <a href="index.html" class="brand">
-      <img src="assets/logo-redondo.jpg" alt="Logo Healthy & Fresh" class="brand-logo">
+      <img src="assets/logo-redondo.webp" alt="Logo Healthy & Fresh" class="brand-logo" width="44" height="44">
       <span class="brand-text">Healthy <em>&amp;</em> Fresh</span>
     </a>
     <nav class="nav" id="nav">
@@ -53,6 +57,7 @@
     <div class="tabs reveal" role="tablist" id="menuTabs">
       <button class="tab active" role="tab" data-tab="ensaladas">🥗 Arma tu ensalada</button>
       <button class="tab" role="tab" data-tab="baguettes">🥖 Baguettes</button>
+      <button class="tab" role="tab" data-tab="sandwiches">🥪 Sándwiches</button>
       <button class="tab" role="tab" data-tab="bowls">🍓 Bowls de fruta</button>
       <button class="tab" role="tab" data-tab="licuados">🥤 Licuados</button>
       <button class="tab" role="tab" data-tab="jugos">🍋 Jugos y bebidas</button>
@@ -144,6 +149,7 @@
 
     <!-- ——— TABS DE PRODUCTOS (se llenan por JS) ——— -->
     <div class="tab-panel" id="panel-baguettes"></div>
+    <div class="tab-panel" id="panel-sandwiches"></div>
     <div class="tab-panel" id="panel-bowls"></div>
     <div class="tab-panel" id="panel-licuados"></div>
     <div class="tab-panel" id="panel-jugos"></div>
@@ -155,7 +161,7 @@
 <footer class="footer">
   <div class="wrap footer-inner">
     <div class="footer-brand">
-      <img src="assets/logo-redondo.jpg" alt="Healthy & Fresh">
+      <img src="assets/logo-redondo.webp" alt="Healthy & Fresh" width="52" height="52" loading="lazy" decoding="async">
       <p>Healthy &amp; Fresh<br><span>Salads Bar &amp; Baguettes · Xalapa</span></p>
     </div>
     <p class="footer-tag script-accent script-claro">¡Come bien, siéntete bien!</p>
@@ -236,7 +242,7 @@
   <img src="" alt="Menú" id="lightboxImg">
 </div>
 
-<script src="js/app.js"></script>
-<script src="js/menu.js"></script>
+<script src="js/app.min.js"></script>
+<script src="js/menu.min.js"></script>
 </body>
 </html>

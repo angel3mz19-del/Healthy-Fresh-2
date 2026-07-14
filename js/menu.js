@@ -39,7 +39,7 @@ const ADEREZOS = [
 ];
 
 const INGREDIENTES = [
-  "Brócoli", "Zanahoria", "Elote", "Tomate", "Grano de elote",
+  "Brócoli", "Zanahoria", "Tomate", "Grano de elote",
   "Champiñones", "Apio", "Arándanos", "Pepino", "Aceitunas",
   "Calabacitas", "Betabel", "Duraznos", "Manzana", "Pasta",
   "Jícama", "Espinaca", "Nopales", "Cebolla morada",

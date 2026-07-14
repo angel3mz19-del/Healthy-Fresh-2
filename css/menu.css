@@ -361,6 +361,21 @@
 .prod-add:active{ transform:scale(.95); }
 .prod-add:disabled{ background:#d8d2c4; box-shadow:none; cursor:not-allowed; transform:none; }
 
+/* Tarjetas seleccionables: mismo patrón de selección que las
+   tarjetas de combinación del constructor de ensaladas */
+.prod-card.seleccionable{
+  cursor:pointer;
+  text-align:left;
+  width:100%;
+  border:2px solid var(--linea);
+}
+.prod-card.seleccionable:hover{ border-color:var(--verde); }
+.prod-card.seleccionable.sel{
+  border-color:var(--verde);
+  background:var(--verde-claro);
+  box-shadow:0 6px 16px rgba(78,138,60,.18);
+}
+
 /* Mini-builder (bowls y licuados) */
 .mini-builder{
   background:#fff;

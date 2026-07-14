@@ -102,14 +102,20 @@ const LICUADOS = {
 
 /* ============================================================
    TABS DEL MENÚ
+   El panel de resumen (#builderSummary) es UN solo componente:
+   al cambiar de pestaña se mueve al panel activo y se repinta
+   con los datos de esa categoría.
    ============================================================ */
+function activarTab(cat) {
+  $$(".tab").forEach((t) => t.classList.toggle("active", t.dataset.tab === cat));
+  $$(".tab-panel").forEach((p) => p.classList.toggle("active", p.id === `panel-${cat}`));
+  moverResumen(cat);
+}
+
 $("#menuTabs").addEventListener("click", (e) => {
   const tab = e.target.closest(".tab");
   if (!tab) return;
-  $$(".tab").forEach((t) => t.classList.remove("active"));
-  $$(".tab-panel").forEach((p) => p.classList.remove("active"));
-  tab.classList.add("active");
-  $(`#panel-${tab.dataset.tab}`).classList.add("active");
+  activarTab(tab.dataset.tab);
 });
 
 /* ============================================================
@@ -266,14 +272,12 @@ function actualizarBuilder() {
   pintarContador($("#aderezoCounter"), builder.aderezo ? 1 : 0, 1);
   pintarContador($("#ingCounter"), builder.ings.length, baseIng);
 
-  /* Resumen */
-  const body = $("#bsumBody");
-  if (!c) {
-    body.innerHTML = `<p class="bsum-empty">Elige una combinación para empezar 👆</p>`;
-  } else {
+  /* Resumen (componente compartido) */
+  let filas = null;
+  if (c) {
     const extrasProt = Math.max(0, builder.prots.length - c.prot);
     const extrasIng  = Math.max(0, builder.ings.length - c.ing);
-    const filas = [
+    filas = [
       ["Combinación", comboTexto(c)],
       ["Proteínas", builder.prots.length ? builder.prots.join(", ") : "—"],
       ["Aderezo", builder.aderezo || "—"],
@@ -288,28 +292,17 @@ function actualizarBuilder() {
       if (extrasIng) partes.push(`${extrasIng} ingrediente${extrasIng > 1 ? "s" : ""} (+${dinero(extrasIng * PRECIO_ING_EXTRA)})`);
       filas.push(["Extras", `<em>${partes.join(" · ")}</em>`]);
     }
-    body.innerHTML = filas
-      .map(([l, v]) => `<div class="bsum-row"><span class="bsum-row-label">${l}</span><span class="bsum-row-val">${v}</span></div>`)
-      .join("");
   }
-
-  const total = precioEnsalada();
-  $("#bsumTotalRow").hidden = !c;
-  $("#bsumTotal").textContent = dinero(total);
-  $(".bsum-title").textContent = builder.modoCombo ? "Tu combo" : "Tu ensalada";
-  $("#btnAddSalad").disabled = !ensaladaCompleta();
-  $("#btnAddSalad").textContent = builder.modoCombo ? "Agregar combo" : "Agregar al carrito";
-  $("#btnResetSalad").hidden = !c;
-
-  /* El bowl "reacciona" al progreso */
-  const bowl = $("#bsumBowl");
-  const emoji = !c ? "🥣" : ensaladaCompleta() ? (builder.modoCombo ? "🍽️" : "🥗") : "🔪";
-  if (bowl.textContent !== emoji) {
-    bowl.textContent = emoji;
-    bowl.classList.remove("shake");
-    void bowl.offsetWidth;
-    bowl.classList.add("shake");
-  }
+  pintarResumen({
+    titulo: builder.modoCombo ? "Tu combo" : "Tu ensalada",
+    emoji: !c ? "🥣" : ensaladaCompleta() ? (builder.modoCombo ? "🍽️" : "🥗") : "🔪",
+    filas,
+    total: c ? precioEnsalada() : null,
+    completo: ensaladaCompleta(),
+    vacio: "Elige una combinación para empezar 👆",
+    textoBoton: builder.modoCombo ? "Agregar combo" : "Agregar al carrito",
+    mostrarReset: !!c,
+  });
 }
 
 /* Limpia las selecciones. Con mantenerCombo=true se queda en modo combo
@@ -328,7 +321,6 @@ function resetBuilder(mantenerCombo = false) {
   actualizarBuilder();
 }
 
-$("#btnResetSalad").addEventListener("click", () => resetBuilder(true));
 $("#btnSalirCombo").addEventListener("click", () => resetBuilder(false));
 
 /* Entra al constructor con la ensalada del combo lista para personalizar */
@@ -337,15 +329,12 @@ function iniciarModoCombo() {
   builder.modoCombo = true;
   builder.combo = COMBO_PAQUETE;
   PASOS_BUILDER.forEach((id) => $(id).classList.remove("bstep-locked"));
-  $$(".tab").forEach((t) => t.classList.remove("active"));
-  $$(".tab-panel").forEach((p) => p.classList.remove("active"));
-  $('[data-tab="ensaladas"]').classList.add("active");
-  $("#panel-ensaladas").classList.add("active");
-  actualizarBuilder();
+  activarTab("ensaladas");
   $("#stepCombo").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-$("#btnAddSalad").addEventListener("click", () => {
+/* Agregar la ensalada (o combo) al carrito — lo dispara el botón compartido */
+function agregarEnsalada() {
   if (!ensaladaCompleta()) return;
   const c = builder.combo;
   const detalles = [
@@ -365,7 +354,7 @@ $("#btnAddSalad").addEventListener("click", () => {
     unico: true, // cada ensalada personalizada es su propia línea
   });
   resetBuilder(false);
-});
+}
 
 /* ============================================================
    TABS DE PRODUCTOS
@@ -373,121 +362,160 @@ $("#btnAddSalad").addEventListener("click", () => {
 
 /* — Baguettes — */
 $("#panel-baguettes").innerHTML = `
-  <p class="prod-intro">
-    Pan crujiente, ingredientes frescos y el relleno bien servido.
-    <br><button class="ver-menu-btn" type="button" data-lightbox="assets/menu-baguettes.webp">📸 Ver el menú con fotos →</button>
-  </p>
-  <div class="prod-grid">
-    ${BAGUETTES.map(
-      (b, i) => `
-      <article class="prod-card">
-        ${b.nuevo ? `<span class="prod-badge-nuevo">Nuevo</span>` : ""}
-        <span class="prod-emoji">${b.emoji}</span>
-        <h3 class="prod-name">${b.nombre}</h3>
-        <p class="prod-desc">${b.desc}</p>
-        <div class="prod-foot">
-          <span class="prod-price">${dinero(b.precio)}</span>
-          <button class="prod-add" type="button" data-baguette="${i}">Agregar +</button>
-        </div>
-      </article>`
-    ).join("")}
+  <div class="builder">
+    <div class="builder-steps">
+      <p class="prod-intro">
+        Pan crujiente, ingredientes frescos y el relleno bien servido. Toca uno para elegirlo.
+        <br><button class="ver-menu-btn" type="button" data-lightbox="assets/menu-baguettes.webp">📸 Ver el menú con fotos →</button>
+      </p>
+      <div class="prod-grid">
+        ${BAGUETTES.map(
+          (b, i) => `
+          <button class="prod-card seleccionable" type="button" data-baguette="${i}" aria-pressed="false">
+            ${b.nuevo ? `<span class="prod-badge-nuevo">Nuevo</span>` : ""}
+            <span class="prod-emoji">${b.emoji}</span>
+            <h3 class="prod-name">${b.nombre}</h3>
+            <p class="prod-desc">${b.desc}</p>
+            <div class="prod-foot">
+              <span class="prod-price">${dinero(b.precio)}</span>
+            </div>
+          </button>`
+        ).join("")}
+      </div>
+    </div>
   </div>`;
 
+const seleccion = { baguette: null, jugo: null, sandwich: null };
+
+function refrescarBaguettes() {
+  $$("#panel-baguettes .prod-card").forEach((card) => {
+    const sel = seleccion.baguette !== null && +card.dataset.baguette === seleccion.baguette;
+    card.classList.toggle("sel", sel);
+    card.setAttribute("aria-pressed", sel);
+  });
+  if (categoriaActiva === "baguettes") resumenBaguettes();
+}
+
+function resumenBaguettes() {
+  const b = seleccion.baguette !== null ? BAGUETTES[seleccion.baguette] : null;
+  pintarResumen({
+    titulo: "Tu baguette",
+    emoji: b ? b.emoji : "🥖",
+    filas: b ? [["Baguette", b.nombre], ["Lleva", b.desc]] : null,
+    total: b ? b.precio : null,
+    completo: !!b,
+    vacio: "Elige tu baguette 👆",
+    mostrarReset: !!b,
+  });
+}
+
 $("#panel-baguettes").addEventListener("click", (e) => {
-  const btn = e.target.closest("[data-baguette]");
-  if (!btn) return;
-  const b = BAGUETTES[+btn.dataset.baguette];
-  agregarAlCarrito({ nombre: `Baguette ${b.nombre}`, detalles: [], precio: b.precio });
+  const card = e.target.closest("[data-baguette]");
+  if (!card) return;
+  const i = +card.dataset.baguette;
+  seleccion.baguette = seleccion.baguette === i ? null : i;
+  refrescarBaguettes();
 });
 
 /* — Sándwiches — */
 const sandwichState = { proteina: null };
 
 $("#panel-sandwiches").innerHTML = `
-  <div class="prod-grid" style="max-width:420px; margin:0 auto 24px;">
-    <article class="prod-card">
-      <span class="prod-emoji">${CLUB_SANDWICH.emoji}</span>
-      <h3 class="prod-name">${CLUB_SANDWICH.nombre}</h3>
-      <p class="prod-desc">${CLUB_SANDWICH.desc}</p>
-      <div class="prod-foot">
-        <span class="prod-price">${dinero(CLUB_SANDWICH.precio)}</span>
-        <button class="prod-add" type="button" data-club>Agregar +</button>
+  <div class="builder">
+    <div class="builder-steps">
+      <div class="prod-grid" style="max-width:420px;">
+        <button class="prod-card seleccionable" type="button" data-club aria-pressed="false">
+          <span class="prod-emoji">${CLUB_SANDWICH.emoji}</span>
+          <h3 class="prod-name">${CLUB_SANDWICH.nombre}</h3>
+          <p class="prod-desc">${CLUB_SANDWICH.desc}</p>
+          <div class="prod-foot">
+            <span class="prod-price">${dinero(CLUB_SANDWICH.precio)}</span>
+          </div>
+        </button>
       </div>
-    </article>
-  </div>
-  <div class="mini-builder">
-    <div class="mb-head">
-      <h3>🥪 Arma tu sándwich</h3>
-      <span class="mb-price">${dinero(SANDWICH.precio)}</span>
-    </div>
-    <p class="mb-sub">Elige tu proteína. Todas incluyen espinaca, zanahoria, pepino, tomate y cebolla.</p>
-    <div class="mb-group">
-      <div class="mb-group-title">Proteína <span class="bstep-counter" id="sandProtCounter">0/1</span></div>
-      <div class="chip-grid" id="sandProtGrid">${SANDWICH.proteinas.map(chipHTML).join("")}</div>
-    </div>
-    <div class="mb-foot">
-      <button class="btn btn-primary" type="button" id="btnAddSand" disabled>Agregar al carrito</button>
+      <div class="mini-builder">
+        <div class="mb-head">
+          <h3>🥪 Arma tu sándwich</h3>
+          <span class="mb-price">${dinero(SANDWICH.precio)}</span>
+        </div>
+        <p class="mb-sub">Elige tu proteína. Todas incluyen espinaca, zanahoria, pepino, tomate y cebolla.</p>
+        <div class="mb-group">
+          <div class="mb-group-title">Proteína <span class="bstep-counter" id="sandProtCounter">0/1</span></div>
+          <div class="chip-grid" id="sandProtGrid">${SANDWICH.proteinas.map(chipHTML).join("")}</div>
+        </div>
+      </div>
     </div>
   </div>`;
 
-function actualizarSandwich() {
+function refrescarSandwich() {
   pintarChips($("#sandProtGrid"), sandwichState.proteina ? [sandwichState.proteina] : [], 1);
   pintarContador($("#sandProtCounter"), sandwichState.proteina ? 1 : 0, 1);
-  $("#btnAddSand").disabled = !sandwichState.proteina;
+  const club = seleccion.sandwich === "club";
+  const card = $("#panel-sandwiches [data-club]");
+  card.classList.toggle("sel", club);
+  card.setAttribute("aria-pressed", club);
+  if (categoriaActiva === "sandwiches") resumenSandwich();
+}
+
+function resumenSandwich() {
+  const club = seleccion.sandwich === "club";
+  const armado = seleccion.sandwich === "armado" && sandwichState.proteina;
+  let filas = null;
+  if (club) filas = [["Producto", CLUB_SANDWICH.nombre], ["Lleva", CLUB_SANDWICH.desc]];
+  if (armado) filas = [["Proteína", sandwichState.proteina], ["Incluye", SANDWICH.incluye.join(", ")]];
+  pintarResumen({
+    titulo: "Tu sándwich",
+    emoji: "🥪",
+    filas,
+    total: club ? CLUB_SANDWICH.precio : armado ? SANDWICH.precio : null,
+    completo: club || !!armado,
+    vacio: "Elige el Club o arma el tuyo 👆",
+    mostrarReset: !!seleccion.sandwich,
+  });
 }
 
 $("#sandProtGrid").addEventListener("click", (e) => {
   const chip = e.target.closest(".chip");
   if (!chip) return;
-  sandwichState.proteina = sandwichState.proteina === chip.dataset.nombre ? null : chip.dataset.nombre;
+  const nueva = sandwichState.proteina === chip.dataset.nombre ? null : chip.dataset.nombre;
+  sandwichState.proteina = nueva;
+  seleccion.sandwich = nueva ? "armado" : null;
   chip.classList.add("pop");
-  actualizarSandwich();
-});
-
-$("#btnAddSand").addEventListener("click", () => {
-  agregarAlCarrito({
-    nombre: "Sándwich",
-    detalles: [
-      `Proteína: ${sandwichState.proteina}`,
-      `Incluye: ${SANDWICH.incluye.join(", ")}`,
-    ],
-    precio: SANDWICH.precio,
-    unico: true,
-  });
-  sandwichState.proteina = null;
-  actualizarSandwich();
+  refrescarSandwich();
 });
 
 $("#panel-sandwiches").addEventListener("click", (e) => {
   const btn = e.target.closest("[data-club]");
   if (!btn) return;
-  agregarAlCarrito({ nombre: CLUB_SANDWICH.nombre, detalles: [], precio: CLUB_SANDWICH.precio });
+  seleccion.sandwich = seleccion.sandwich === "club" ? null : "club";
+  sandwichState.proteina = null;
+  refrescarSandwich();
 });
 
 /* — Bowl de frutas (mini-constructor) — */
 const bowlState = { frutas: [], toppings: [], base: null };
 
 $("#panel-bowls").innerHTML = `
-  <div class="mini-builder">
-    <div class="mb-head">
-      <h3>🍓 Arma tu bowl de frutas</h3>
-      <span class="mb-price">${dinero(PRECIO_BOWL_FRUTAS)}</span>
-    </div>
-    <p class="mb-sub">Fruta fresca cortada al momento. Elige 3 porciones de fruta —puedes repetir la misma—, 2 toppings y tu base favorita.</p>
-    <div class="mb-group">
-      <div class="mb-group-title">Elige tus frutas <span class="bstep-counter" id="bowlFrutasCounter">0/3</span></div>
-      <div class="chip-grid" id="bowlFrutasGrid">${BOWL_FRUTAS.frutas.map(chipHTML).join("")}</div>
-    </div>
-    <div class="mb-group">
-      <div class="mb-group-title">Elige tus toppings <span class="bstep-counter" id="bowlTopCounter">0/2</span></div>
-      <div class="chip-grid" id="bowlTopGrid">${BOWL_FRUTAS.toppings.map(chipHTML).join("")}</div>
-    </div>
-    <div class="mb-group">
-      <div class="mb-group-title">Elige tu base <span class="bstep-counter" id="bowlBaseCounter">0/1</span></div>
-      <div class="chip-grid" id="bowlBaseGrid">${BOWL_FRUTAS.bases.map(chipHTML).join("")}</div>
-    </div>
-    <div class="mb-foot">
-      <button class="btn btn-primary" type="button" id="btnAddBowl" disabled>Agregar al carrito</button>
+  <div class="builder">
+    <div class="builder-steps">
+      <div class="mini-builder">
+        <div class="mb-head">
+          <h3>🍓 Arma tu bowl de frutas</h3>
+        </div>
+        <p class="mb-sub">Fruta fresca cortada al momento. Elige 3 porciones de fruta —puedes repetir la misma—, 2 toppings y tu base favorita.</p>
+        <div class="mb-group">
+          <div class="mb-group-title">Elige tus frutas <span class="bstep-counter" id="bowlFrutasCounter">0/3</span></div>
+          <div class="chip-grid" id="bowlFrutasGrid">${BOWL_FRUTAS.frutas.map(chipHTML).join("")}</div>
+        </div>
+        <div class="mb-group">
+          <div class="mb-group-title">Elige tus toppings <span class="bstep-counter" id="bowlTopCounter">0/2</span></div>
+          <div class="chip-grid" id="bowlTopGrid">${BOWL_FRUTAS.toppings.map(chipHTML).join("")}</div>
+        </div>
+        <div class="mb-group">
+          <div class="mb-group-title">Elige tu base <span class="bstep-counter" id="bowlBaseCounter">0/1</span></div>
+          <div class="chip-grid" id="bowlBaseGrid">${BOWL_FRUTAS.bases.map(chipHTML).join("")}</div>
+        </div>
+      </div>
     </div>
   </div>`;
 
@@ -515,6 +543,14 @@ function pintarChipsFrutas() {
   });
 }
 
+function bowlCompleto() {
+  return (
+    bowlState.frutas.length === BOWL_FRUTAS.maxFrutas &&
+    bowlState.toppings.length === BOWL_FRUTAS.maxToppings &&
+    !!bowlState.base
+  );
+}
+
 function actualizarBowl() {
   pintarChipsFrutas();
   pintarChips($("#bowlTopGrid"), bowlState.toppings, BOWL_FRUTAS.maxToppings);
@@ -522,11 +558,26 @@ function actualizarBowl() {
   pintarContador($("#bowlFrutasCounter"), bowlState.frutas.length, BOWL_FRUTAS.maxFrutas);
   pintarContador($("#bowlTopCounter"), bowlState.toppings.length, BOWL_FRUTAS.maxToppings);
   pintarContador($("#bowlBaseCounter"), bowlState.base ? 1 : 0, 1);
-  $("#btnAddBowl").disabled = !(
-    bowlState.frutas.length === BOWL_FRUTAS.maxFrutas &&
-    bowlState.toppings.length === BOWL_FRUTAS.maxToppings &&
-    bowlState.base
-  );
+  if (categoriaActiva === "bowls") resumenBowl();
+}
+
+function resumenBowl() {
+  const hay = bowlState.frutas.length || bowlState.toppings.length || bowlState.base;
+  pintarResumen({
+    titulo: "Tu bowl",
+    emoji: bowlCompleto() ? "🍓" : hay ? "🔪" : "🥣",
+    filas: hay
+      ? [
+          ["Frutas", bowlState.frutas.length ? listaConConteo(bowlState.frutas) : "—"],
+          ["Toppings", bowlState.toppings.length ? bowlState.toppings.join(", ") : "—"],
+          ["Base", bowlState.base || "—"],
+        ]
+      : null,
+    total: PRECIO_BOWL_FRUTAS,
+    completo: bowlCompleto(),
+    vacio: "Elige tus frutas para empezar 👆",
+    mostrarReset: !!hay,
+  });
 }
 
 $("#bowlFrutasGrid").addEventListener("click", (e) => {
@@ -560,7 +611,9 @@ $("#bowlBaseGrid").addEventListener("click", (e) => {
   actualizarBowl();
 });
 
-$("#btnAddBowl").addEventListener("click", () => {
+/* Agregar el bowl al carrito — lo dispara el botón compartido */
+function agregarBowl() {
+  if (!bowlCompleto()) return;
   agregarAlCarrito({
     nombre: "Bowl de frutas",
     detalles: [
@@ -571,43 +624,47 @@ $("#btnAddBowl").addEventListener("click", () => {
     precio: PRECIO_BOWL_FRUTAS,
     unico: true,
   });
+  resetBowl();
+}
+
+function resetBowl() {
   bowlState.frutas = [];
   bowlState.toppings = [];
   bowlState.base = null;
   actualizarBowl();
-});
+}
 
 /* — Licuados (mini-constructor) — */
 const licState = { sabor: null, proteina: null, extras: [] };
 
 $("#panel-licuados").innerHTML = `
-  <p class="prod-intro">
-    Licuados a base de leche deslactosada, con la proteína que tu rutina pide.
-    <br><button class="ver-menu-btn" type="button" data-lightbox="assets/menu-licuados.webp">📸 Ver el menú Healthy Protein →</button>
-  </p>
-  <div class="mini-builder">
-    <div class="mb-head">
-      <h3>🥤 Arma tu licuado</h3>
-      <span class="mb-price" id="licPrecio">—</span>
-    </div>
-    <p class="mb-sub">Elige tu sabor y el tipo de proteína. El de café va con leche de almendras.</p>
-    <div class="mb-group">
-      <div class="mb-group-title">Sabor <span class="bstep-counter" id="licSaborCounter">0/1</span></div>
-      <div class="chip-grid" id="licSaborGrid">${LICUADOS.sabores.map(chipHTML).join("")}</div>
-    </div>
-    <div class="mb-group">
-      <div class="mb-group-title">Proteína <span class="bstep-counter" id="licProtCounter">0/1</span></div>
-      <div class="chip-grid" id="licProtGrid">
-        ${LICUADOS.proteinas.map((p) => `<button class="chip" data-nombre="${p.nombre}" type="button">${p.nombre} · ${dinero(p.precio)}</button>`).join("")}
+  <div class="builder">
+    <div class="builder-steps">
+      <p class="prod-intro">
+        Licuados a base de leche deslactosada, con la proteína que tu rutina pide.
+        <br><button class="ver-menu-btn" type="button" data-lightbox="assets/menu-licuados.webp">📸 Ver el menú Healthy Protein →</button>
+      </p>
+      <div class="mini-builder">
+        <div class="mb-head">
+          <h3>🥤 Arma tu licuado</h3>
+        </div>
+        <p class="mb-sub">Elige tu sabor y el tipo de proteína. El de café va con leche de almendras.</p>
+        <div class="mb-group">
+          <div class="mb-group-title">Sabor <span class="bstep-counter" id="licSaborCounter">0/1</span></div>
+          <div class="chip-grid" id="licSaborGrid">${LICUADOS.sabores.map(chipHTML).join("")}</div>
+        </div>
+        <div class="mb-group">
+          <div class="mb-group-title">Proteína <span class="bstep-counter" id="licProtCounter">0/1</span></div>
+          <div class="chip-grid" id="licProtGrid">
+            ${LICUADOS.proteinas.map((p) => `<button class="chip" data-nombre="${p.nombre}" type="button">${p.nombre} · ${dinero(p.precio)}</button>`).join("")}
+          </div>
+        </div>
+        <div class="mb-group">
+          <div class="mb-group-title">Puedes incluir (sin costo)</div>
+          <div class="chip-grid" id="licExtraGrid">${LICUADOS.extras.map(chipHTML).join("")}</div>
+        </div>
+        <p class="mb-note">Los $60 llevan 5 g de proteína · los $80 llevan 25–30 g</p>
       </div>
-    </div>
-    <div class="mb-group">
-      <div class="mb-group-title">Puedes incluir (sin costo)</div>
-      <div class="chip-grid" id="licExtraGrid">${LICUADOS.extras.map(chipHTML).join("")}</div>
-    </div>
-    <div class="mb-foot">
-      <span class="mb-note">Los $60 llevan 5 g de proteína · los $80 llevan 25–30 g</span>
-      <button class="btn btn-primary" type="button" id="btnAddLic" disabled>Agregar al carrito</button>
     </div>
   </div>`;
 
@@ -617,8 +674,27 @@ function actualizarLicuado() {
   pintarChips($("#licExtraGrid"), licState.extras, LICUADOS.extras.length);
   pintarContador($("#licSaborCounter"), licState.sabor ? 1 : 0, 1);
   pintarContador($("#licProtCounter"), licState.proteina ? 1 : 0, 1);
-  $("#licPrecio").textContent = licState.proteina ? dinero(licState.proteina.precio) : "—";
-  $("#btnAddLic").disabled = !(licState.sabor && licState.proteina);
+  if (categoriaActiva === "licuados") resumenLicuado();
+}
+
+function resumenLicuado() {
+  const hay = licState.sabor || licState.proteina || licState.extras.length;
+  const filas = hay
+    ? [
+        ["Sabor", licState.sabor || "—"],
+        ["Proteína", licState.proteina ? licState.proteina.nombre : "—"],
+      ]
+    : null;
+  if (filas && licState.extras.length) filas.push(["Incluye", licState.extras.join(", ")]);
+  pintarResumen({
+    titulo: "Tu licuado",
+    emoji: licState.sabor && licState.proteina ? "🥤" : hay ? "🔪" : "🥣",
+    filas,
+    total: licState.proteina ? licState.proteina.precio : null,
+    completo: !!(licState.sabor && licState.proteina),
+    vacio: "Elige tu sabor para empezar 👆",
+    mostrarReset: !!hay,
+  });
 }
 
 $("#licSaborGrid").addEventListener("click", (e) => {
@@ -644,7 +720,9 @@ $("#licExtraGrid").addEventListener("click", (e) => {
   actualizarLicuado();
 });
 
-$("#btnAddLic").addEventListener("click", () => {
+/* Agregar el licuado al carrito — lo dispara el botón compartido */
+function agregarLicuado() {
+  if (!(licState.sabor && licState.proteina)) return;
   const detalles = [
     `Sabor: ${licState.sabor}`,
     `Proteína: ${licState.proteina.nombre}`,
@@ -656,57 +734,87 @@ $("#btnAddLic").addEventListener("click", () => {
     precio: licState.proteina.precio,
     unico: true,
   });
+  resetLicuado();
+}
+
+function resetLicuado() {
   licState.sabor = null;
   licState.proteina = null;
   licState.extras = [];
   actualizarLicuado();
-});
+}
 
 /* — Jugos y bebidas — */
+const JUGOS = [
+  { nombre: `Jugo Verde "Desintoxícate"`, precio: 80, emoji: "🥬", desc: "Nuestro clásico verde, recién exprimido, para empezar el día ligero." },
+  { nombre: "Limonada natural", precio: PRECIO_LIMONADA, emoji: "🍋", desc: "Variedad de sabores de temporada, preparada al momento. Pregunta por el sabor del día." },
+];
+
 $("#panel-jugos").innerHTML = `
-  <div class="prod-grid">
-    <article class="prod-card">
-      <span class="prod-emoji">🥬</span>
-      <h3 class="prod-name">Jugo Verde "Desintoxícate"</h3>
-      <p class="prod-desc">Nuestro clásico verde, recién exprimido, para empezar el día ligero.</p>
-      <div class="prod-foot">
-        <span class="prod-price">${dinero(80)}</span>
-        <button class="prod-add" type="button" data-bebida="jugo">Agregar +</button>
+  <div class="builder">
+    <div class="builder-steps">
+      <div class="prod-grid">
+        ${JUGOS.map(
+          (j, i) => `
+          <button class="prod-card seleccionable" type="button" data-bebida="${i}" aria-pressed="false">
+            <span class="prod-emoji">${j.emoji}</span>
+            <h3 class="prod-name">${j.nombre}</h3>
+            <p class="prod-desc">${j.desc}</p>
+            <div class="prod-foot">
+              <span class="prod-price">${dinero(j.precio)}</span>
+            </div>
+          </button>`
+        ).join("")}
       </div>
-    </article>
-    <article class="prod-card">
-      <span class="prod-emoji">🍋</span>
-      <h3 class="prod-name">Limonada natural</h3>
-      <p class="prod-desc">Variedad de sabores de temporada, preparada al momento. Pregunta por el sabor del día.</p>
-      <div class="prod-foot">
-        <span class="prod-price">${dinero(PRECIO_LIMONADA)}</span>
-        <button class="prod-add" type="button" data-bebida="limonada">Agregar +</button>
-      </div>
-    </article>
+    </div>
   </div>`;
 
+function refrescarJugos() {
+  $$("#panel-jugos .prod-card").forEach((card) => {
+    const sel = seleccion.jugo !== null && +card.dataset.bebida === seleccion.jugo;
+    card.classList.toggle("sel", sel);
+    card.setAttribute("aria-pressed", sel);
+  });
+  if (categoriaActiva === "jugos") resumenJugos();
+}
+
+function resumenJugos() {
+  const j = seleccion.jugo !== null ? JUGOS[seleccion.jugo] : null;
+  pintarResumen({
+    titulo: "Tu bebida",
+    emoji: j ? j.emoji : "🍋",
+    filas: j ? [["Bebida", j.nombre]] : null,
+    total: j ? j.precio : null,
+    completo: !!j,
+    vacio: "Elige tu bebida 👆",
+    mostrarReset: !!j,
+  });
+}
+
 $("#panel-jugos").addEventListener("click", (e) => {
-  const btn = e.target.closest("[data-bebida]");
-  if (!btn) return;
-  if (btn.dataset.bebida === "jugo") {
-    agregarAlCarrito({ nombre: `Jugo Verde "Desintoxícate"`, detalles: [], precio: 80 });
-  } else {
-    agregarAlCarrito({ nombre: "Limonada natural", detalles: [], precio: PRECIO_LIMONADA });
-  }
+  const card = e.target.closest("[data-bebida]");
+  if (!card) return;
+  const i = +card.dataset.bebida;
+  seleccion.jugo = seleccion.jugo === i ? null : i;
+  refrescarJugos();
 });
 
 /* — Combos — */
 $("#panel-combos").innerHTML = `
-  <div class="prod-grid" style="max-width:420px; margin:0 auto;">
-    <article class="prod-card">
-      <img src="assets/combo.webp" alt="Combo: ensalada mediana + agua de sabor" class="prod-img" loading="lazy" decoding="async">
-      <h3 class="prod-name">Arma tu combo</h3>
-      <p class="prod-desc">Ensalada mediana (1 proteína + 3 ingredientes) + agua de sabor. Personalízala igual que una ensalada individual.</p>
-      <div class="prod-foot">
-        <span class="prod-price">${dinero(COMBO_PAQUETE.precio)}</span>
-        <button class="prod-add" type="button" data-combo>Personalizar +</button>
+  <div class="builder">
+    <div class="builder-steps">
+      <div class="prod-grid" style="max-width:420px;">
+        <article class="prod-card">
+          <img src="assets/combo.webp" alt="Combo: ensalada mediana + agua de sabor" class="prod-img" loading="lazy" decoding="async">
+          <h3 class="prod-name">Arma tu combo</h3>
+          <p class="prod-desc">Ensalada mediana (1 proteína + 3 ingredientes) + agua de sabor. Personalízala igual que una ensalada individual.</p>
+          <div class="prod-foot">
+            <span class="prod-price">${dinero(COMBO_PAQUETE.precio)}</span>
+            <button class="prod-add" type="button" data-combo>Personalizar +</button>
+          </div>
+        </article>
       </div>
-    </article>
+    </div>
   </div>`;
 
 $("#panel-combos").addEventListener("click", (e) => {
@@ -714,6 +822,117 @@ $("#panel-combos").addEventListener("click", (e) => {
   if (!btn) return;
   iniciarModoCombo();
 });
+
+/* ============================================================
+   RESUMEN COMPARTIDO
+   Un único componente (#builderSummary: panel sticky con total y
+   botón "Agregar al carrito") para TODO el menú. Se mueve a la
+   pestaña activa y cada categoría solo aporta sus datos.
+   ============================================================ */
+let categoriaActiva = "ensaladas";
+
+/* Pinta el panel de resumen. Mismo HTML/CSS/animaciones que Ensaladas. */
+function pintarResumen({ titulo, emoji, filas, total, completo, vacio, textoBoton = "Agregar al carrito", mostrarReset = false }) {
+  $(".bsum-title").textContent = titulo;
+  const body = $("#bsumBody");
+  if (!filas || !filas.length) {
+    body.innerHTML = `<p class="bsum-empty">${vacio}</p>`;
+  } else {
+    body.innerHTML = filas
+      .map(([l, v]) => `<div class="bsum-row"><span class="bsum-row-label">${l}</span><span class="bsum-row-val">${v}</span></div>`)
+      .join("");
+  }
+  $("#bsumTotalRow").hidden = total == null;
+  $("#bsumTotal").textContent = total == null ? "$0" : dinero(total);
+  const btn = $("#btnAddSalad");
+  btn.disabled = !completo;
+  btn.textContent = textoBoton;
+  $("#btnResetSalad").hidden = !mostrarReset;
+  const bowl = $("#bsumBowl");
+  if (bowl.textContent !== emoji) {
+    bowl.textContent = emoji;
+    bowl.classList.remove("shake");
+    void bowl.offsetWidth;
+    bowl.classList.add("shake");
+  }
+}
+
+/* Cada categoría declara cómo pintar el resumen, agregar y reiniciar. */
+const ADAPTADORES = {
+  ensaladas: {
+    render: actualizarBuilder,
+    agregar: agregarEnsalada,
+    reset: () => resetBuilder(true),
+  },
+  baguettes: {
+    render: resumenBaguettes,
+    agregar: () => {
+      const b = seleccion.baguette !== null ? BAGUETTES[seleccion.baguette] : null;
+      if (!b) return;
+      agregarAlCarrito({ nombre: `Baguette ${b.nombre}`, detalles: [], precio: b.precio });
+      seleccion.baguette = null;
+      refrescarBaguettes();
+    },
+    reset: () => { seleccion.baguette = null; refrescarBaguettes(); },
+  },
+  sandwiches: {
+    render: resumenSandwich,
+    agregar: () => {
+      if (seleccion.sandwich === "club") {
+        agregarAlCarrito({ nombre: CLUB_SANDWICH.nombre, detalles: [], precio: CLUB_SANDWICH.precio });
+      } else if (seleccion.sandwich === "armado" && sandwichState.proteina) {
+        agregarAlCarrito({
+          nombre: "Sándwich",
+          detalles: [`Proteína: ${sandwichState.proteina}`, `Incluye: ${SANDWICH.incluye.join(", ")}`],
+          precio: SANDWICH.precio,
+          unico: true,
+        });
+      } else return;
+      seleccion.sandwich = null;
+      sandwichState.proteina = null;
+      refrescarSandwich();
+    },
+    reset: () => { seleccion.sandwich = null; sandwichState.proteina = null; refrescarSandwich(); },
+  },
+  bowls:    { render: resumenBowl,    agregar: agregarBowl,    reset: resetBowl },
+  licuados: { render: resumenLicuado, agregar: agregarLicuado, reset: resetLicuado },
+  jugos: {
+    render: resumenJugos,
+    agregar: () => {
+      const j = seleccion.jugo !== null ? JUGOS[seleccion.jugo] : null;
+      if (!j) return;
+      agregarAlCarrito({ nombre: j.nombre, detalles: [], precio: j.precio });
+      seleccion.jugo = null;
+      refrescarJugos();
+    },
+    reset: () => { seleccion.jugo = null; refrescarJugos(); },
+  },
+  combos: {
+    render: () =>
+      pintarResumen({
+        titulo: "Tu combo",
+        emoji: "🍽️",
+        filas: null,
+        total: null,
+        completo: false,
+        vacio: "Toca «Personalizar» y arma la ensalada de tu combo 👆",
+      }),
+    agregar: () => {},
+    reset: () => {},
+  },
+};
+
+/* Mueve el único panel de resumen a la pestaña activa y lo repinta. */
+function moverResumen(cat) {
+  categoriaActiva = cat;
+  const destino = $(`#panel-${cat} .builder`);
+  if (destino) destino.appendChild($("#builderSummary"));
+  ADAPTADORES[cat].render();
+}
+
+/* Botones compartidos: despachan a la categoría activa. */
+$("#btnAddSalad").addEventListener("click", () => ADAPTADORES[categoriaActiva].agregar());
+$("#btnResetSalad").addEventListener("click", () => ADAPTADORES[categoriaActiva].reset());
 
 /* ============================================================
    LIGHTBOX (menús con foto)
@@ -748,4 +967,6 @@ $("#cartBarBtn").addEventListener("click", abrirCarrito);
 actualizarBuilder();
 actualizarBowl();
 actualizarLicuado();
-actualizarSandwich();
+refrescarSandwich();
+refrescarBaguettes();
+refrescarJugos();

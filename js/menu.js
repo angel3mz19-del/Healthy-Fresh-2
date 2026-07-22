@@ -11,11 +11,9 @@
    DATOS DEL MENÚ
    ============================================================ */
 
-/* ⚠️ PRECIOS POR CONFIRMAR CON EL DUEÑO ⚠️
-   El bowl de frutas y las limonadas no tienen precio en el menú
-   original. Estos son provisionales — actualizar aquí cuando el
-   dueño los confirme. */
-const PRECIO_BOWL_FRUTAS = 75;   // ← POR CONFIRMAR
+/* ⚠️ PRECIO POR CONFIRMAR CON EL DUEÑO ⚠️
+   Las limonadas no tienen precio en el menú original. Este es
+   provisional — actualizar aquí cuando el dueño lo confirme. */
 const PRECIO_LIMONADA    = 45;   // ← POR CONFIRMAR
 
 const COMBOS_ENSALADA = [
@@ -81,24 +79,6 @@ const SANDWICH = {
   incluye: ["Espinaca", "Zanahoria", "Pepino", "Tomate", "Cebolla"],
 };
 
-const BOWL_FRUTAS = {
-  frutas:   ["Piña", "Papaya", "Melón", "Plátano", "Manzana", "Arándanos"],
-  toppings: ["Granola", "Ajonjolí garapiñado", "Coco rallado"],
-  bases:    ["Miel", "Biónico"],
-  maxFrutas: 3,
-  maxToppings: 2,
-};
-
-const LICUADOS = {
-  sabores: ["Papaya", "Mango", "Manzana", "Plátano", "Frutos rojos", "Café"],
-  proteinas: [
-    { nombre: "Natural (5 g)",                     precio: 60 },
-    { nombre: "Frutos rojos (5 g)",                precio: 60 },
-    { nombre: "Post entrenamiento vainilla (25 g)", precio: 80 },
-    { nombre: "Chícharo alto en BCAA (30 g)",       precio: 80 },
-  ],
-  extras: ["Avena", "Miel", "Granola"],
-};
 
 /* ============================================================
    TABS DEL MENÚ
@@ -492,258 +472,6 @@ $("#panel-sandwiches").addEventListener("click", (e) => {
   refrescarSandwich();
 });
 
-/* — Bowl de frutas (mini-constructor) — */
-const bowlState = { frutas: [], toppings: [], base: null };
-
-$("#panel-bowls").innerHTML = `
-  <div class="builder">
-    <div class="builder-steps">
-      <div class="mini-builder">
-        <div class="mb-head">
-          <h3>🍓 Arma tu bowl de frutas</h3>
-        </div>
-        <p class="mb-sub">Fruta fresca cortada al momento. Elige 3 porciones de fruta —puedes repetir la misma—, 2 toppings y tu base favorita.</p>
-        <div class="mb-group">
-          <div class="mb-group-title">Elige tus frutas <span class="bstep-counter" id="bowlFrutasCounter">0/3</span></div>
-          <div class="chip-grid" id="bowlFrutasGrid">${BOWL_FRUTAS.frutas.map(chipHTML).join("")}</div>
-        </div>
-        <div class="mb-group">
-          <div class="mb-group-title">Elige tus toppings <span class="bstep-counter" id="bowlTopCounter">0/2</span></div>
-          <div class="chip-grid" id="bowlTopGrid">${BOWL_FRUTAS.toppings.map(chipHTML).join("")}</div>
-        </div>
-        <div class="mb-group">
-          <div class="mb-group-title">Elige tu base <span class="bstep-counter" id="bowlBaseCounter">0/1</span></div>
-          <div class="chip-grid" id="bowlBaseGrid">${BOWL_FRUTAS.bases.map(chipHTML).join("")}</div>
-        </div>
-      </div>
-    </div>
-  </div>`;
-
-function miniToggle(lista, nombre, max) {
-  const i = lista.indexOf(nombre);
-  if (i >= 0) { lista.splice(i, 1); return; }
-  if (lista.length >= max) lista.shift(); // sustituye la más antigua
-  lista.push(nombre);
-}
-
-/* Agrupa repetidos para mostrarlos: ["Papaya","Papaya","Melón"] → "Papaya ×2, Melón" */
-function listaConConteo(arr) {
-  const conteo = new Map();
-  arr.forEach((x) => conteo.set(x, (conteo.get(x) || 0) + 1));
-  return [...conteo].map(([n, c]) => (c > 1 ? `${n} ×${c}` : n)).join(", ");
-}
-
-/* Las frutas admiten porciones repetidas: cada chip muestra ×N */
-function pintarChipsFrutas() {
-  $$(".chip", $("#bowlFrutasGrid")).forEach((chip) => {
-    const veces = bowlState.frutas.filter((x) => x === chip.dataset.nombre).length;
-    chip.classList.toggle("sel", veces > 0);
-    if (veces > 1) chip.setAttribute("data-veces", `×${veces}`);
-    else chip.removeAttribute("data-veces");
-  });
-}
-
-function bowlCompleto() {
-  return (
-    bowlState.frutas.length === BOWL_FRUTAS.maxFrutas &&
-    bowlState.toppings.length === BOWL_FRUTAS.maxToppings &&
-    !!bowlState.base
-  );
-}
-
-function actualizarBowl() {
-  pintarChipsFrutas();
-  pintarChips($("#bowlTopGrid"), bowlState.toppings, BOWL_FRUTAS.maxToppings);
-  pintarChips($("#bowlBaseGrid"), bowlState.base ? [bowlState.base] : [], 1);
-  pintarContador($("#bowlFrutasCounter"), bowlState.frutas.length, BOWL_FRUTAS.maxFrutas);
-  pintarContador($("#bowlTopCounter"), bowlState.toppings.length, BOWL_FRUTAS.maxToppings);
-  pintarContador($("#bowlBaseCounter"), bowlState.base ? 1 : 0, 1);
-  if (categoriaActiva === "bowls") resumenBowl();
-}
-
-function resumenBowl() {
-  const hay = bowlState.frutas.length || bowlState.toppings.length || bowlState.base;
-  pintarResumen({
-    titulo: "Tu bowl",
-    emoji: bowlCompleto() ? "🍓" : hay ? "🔪" : "🥣",
-    filas: hay
-      ? [
-          ["Frutas", bowlState.frutas.length ? listaConConteo(bowlState.frutas) : "—"],
-          ["Toppings", bowlState.toppings.length ? bowlState.toppings.join(", ") : "—"],
-          ["Base", bowlState.base || "—"],
-        ]
-      : null,
-    total: PRECIO_BOWL_FRUTAS,
-    completo: bowlCompleto(),
-    vacio: "Elige tus frutas para empezar 👆",
-    mostrarReset: !!hay,
-  });
-}
-
-$("#bowlFrutasGrid").addEventListener("click", (e) => {
-  const chip = e.target.closest(".chip");
-  if (!chip) return;
-  const fruta = chip.dataset.nombre;
-  const veces = bowlState.frutas.filter((x) => x === fruta).length;
-  if (veces === BOWL_FRUTAS.maxFrutas) {
-    // ya llena todo el bowl: un clic más la quita
-    bowlState.frutas = bowlState.frutas.filter((x) => x !== fruta);
-  } else {
-    // cada clic agrega una porción (puede repetirse); si está lleno, sale la más antigua
-    if (bowlState.frutas.length >= BOWL_FRUTAS.maxFrutas) bowlState.frutas.shift();
-    bowlState.frutas.push(fruta);
-  }
-  chip.classList.add("pop");
-  actualizarBowl();
-});
-$("#bowlTopGrid").addEventListener("click", (e) => {
-  const chip = e.target.closest(".chip");
-  if (!chip) return;
-  miniToggle(bowlState.toppings, chip.dataset.nombre, BOWL_FRUTAS.maxToppings);
-  chip.classList.add("pop");
-  actualizarBowl();
-});
-$("#bowlBaseGrid").addEventListener("click", (e) => {
-  const chip = e.target.closest(".chip");
-  if (!chip) return;
-  bowlState.base = bowlState.base === chip.dataset.nombre ? null : chip.dataset.nombre;
-  chip.classList.add("pop");
-  actualizarBowl();
-});
-
-/* Agregar el bowl al carrito — lo dispara el botón compartido */
-function agregarBowl() {
-  if (!bowlCompleto()) return;
-  agregarAlCarrito({
-    nombre: "Bowl de frutas",
-    detalles: [
-      `Frutas: ${listaConConteo(bowlState.frutas)}`,
-      `Toppings: ${bowlState.toppings.join(", ")}`,
-      `Base: ${bowlState.base}`,
-    ],
-    precio: PRECIO_BOWL_FRUTAS,
-    unico: true,
-  });
-  resetBowl();
-}
-
-function resetBowl() {
-  bowlState.frutas = [];
-  bowlState.toppings = [];
-  bowlState.base = null;
-  actualizarBowl();
-}
-
-/* — Licuados (mini-constructor) — */
-const licState = { sabor: null, proteina: null, extras: [] };
-
-$("#panel-licuados").innerHTML = `
-  <div class="builder">
-    <div class="builder-steps">
-      <p class="prod-intro">
-        Licuados a base de leche deslactosada, con la proteína que tu rutina pide.
-        <br><button class="ver-menu-btn" type="button" data-lightbox="assets/menu-licuados.webp">📸 Ver el menú Healthy Protein →</button>
-      </p>
-      <div class="mini-builder">
-        <div class="mb-head">
-          <h3>🥤 Arma tu licuado</h3>
-        </div>
-        <p class="mb-sub">Elige tu sabor y el tipo de proteína. El de café va con leche de almendras.</p>
-        <div class="mb-group">
-          <div class="mb-group-title">Sabor <span class="bstep-counter" id="licSaborCounter">0/1</span></div>
-          <div class="chip-grid" id="licSaborGrid">${LICUADOS.sabores.map(chipHTML).join("")}</div>
-        </div>
-        <div class="mb-group">
-          <div class="mb-group-title">Proteína <span class="bstep-counter" id="licProtCounter">0/1</span></div>
-          <div class="chip-grid" id="licProtGrid">
-            ${LICUADOS.proteinas.map((p) => `<button class="chip" data-nombre="${p.nombre}" type="button">${p.nombre} · ${dinero(p.precio)}</button>`).join("")}
-          </div>
-        </div>
-        <div class="mb-group">
-          <div class="mb-group-title">Puedes incluir (sin costo)</div>
-          <div class="chip-grid" id="licExtraGrid">${LICUADOS.extras.map(chipHTML).join("")}</div>
-        </div>
-        <p class="mb-note">Los $60 llevan 5 g de proteína · los $80 llevan 25–30 g</p>
-      </div>
-    </div>
-  </div>`;
-
-function actualizarLicuado() {
-  pintarChips($("#licSaborGrid"), licState.sabor ? [licState.sabor] : [], 1);
-  pintarChips($("#licProtGrid"), licState.proteina ? [licState.proteina.nombre] : [], 1);
-  pintarChips($("#licExtraGrid"), licState.extras, LICUADOS.extras.length);
-  pintarContador($("#licSaborCounter"), licState.sabor ? 1 : 0, 1);
-  pintarContador($("#licProtCounter"), licState.proteina ? 1 : 0, 1);
-  if (categoriaActiva === "licuados") resumenLicuado();
-}
-
-function resumenLicuado() {
-  const hay = licState.sabor || licState.proteina || licState.extras.length;
-  const filas = hay
-    ? [
-        ["Sabor", licState.sabor || "—"],
-        ["Proteína", licState.proteina ? licState.proteina.nombre : "—"],
-      ]
-    : null;
-  if (filas && licState.extras.length) filas.push(["Incluye", licState.extras.join(", ")]);
-  pintarResumen({
-    titulo: "Tu licuado",
-    emoji: licState.sabor && licState.proteina ? "🥤" : hay ? "🔪" : "🥣",
-    filas,
-    total: licState.proteina ? licState.proteina.precio : null,
-    completo: !!(licState.sabor && licState.proteina),
-    vacio: "Elige tu sabor para empezar 👆",
-    mostrarReset: !!hay,
-  });
-}
-
-$("#licSaborGrid").addEventListener("click", (e) => {
-  const chip = e.target.closest(".chip");
-  if (!chip) return;
-  licState.sabor = licState.sabor === chip.dataset.nombre ? null : chip.dataset.nombre;
-  chip.classList.add("pop");
-  actualizarLicuado();
-});
-$("#licProtGrid").addEventListener("click", (e) => {
-  const chip = e.target.closest(".chip");
-  if (!chip) return;
-  const p = LICUADOS.proteinas.find((x) => x.nombre === chip.dataset.nombre);
-  licState.proteina = licState.proteina && licState.proteina.nombre === p.nombre ? null : p;
-  chip.classList.add("pop");
-  actualizarLicuado();
-});
-$("#licExtraGrid").addEventListener("click", (e) => {
-  const chip = e.target.closest(".chip");
-  if (!chip) return;
-  toggleLista(licState.extras, chip.dataset.nombre);
-  chip.classList.add("pop");
-  actualizarLicuado();
-});
-
-/* Agregar el licuado al carrito — lo dispara el botón compartido */
-function agregarLicuado() {
-  if (!(licState.sabor && licState.proteina)) return;
-  const detalles = [
-    `Sabor: ${licState.sabor}`,
-    `Proteína: ${licState.proteina.nombre}`,
-  ];
-  if (licState.extras.length) detalles.push(`Incluye: ${licState.extras.join(", ")}`);
-  agregarAlCarrito({
-    nombre: "Licuado Healthy Protein",
-    detalles,
-    precio: licState.proteina.precio,
-    unico: true,
-  });
-  resetLicuado();
-}
-
-function resetLicuado() {
-  licState.sabor = null;
-  licState.proteina = null;
-  licState.extras = [];
-  actualizarLicuado();
-}
-
 /* — Jugos y bebidas — */
 const JUGOS = [
   { nombre: `Jugo Verde "Desintoxícate"`, precio: 80, emoji: "🥬", desc: "Nuestro clásico verde, recién exprimido, para empezar el día ligero." },
@@ -894,8 +622,6 @@ const ADAPTADORES = {
     },
     reset: () => { seleccion.sandwich = null; sandwichState.proteina = null; refrescarSandwich(); },
   },
-  bowls:    { render: resumenBowl,    agregar: agregarBowl,    reset: resetBowl },
-  licuados: { render: resumenLicuado, agregar: agregarLicuado, reset: resetLicuado },
   jugos: {
     render: resumenJugos,
     agregar: () => {
@@ -965,8 +691,6 @@ $("#cartBarBtn").addEventListener("click", abrirCarrito);
 
 /* Estado inicial */
 actualizarBuilder();
-actualizarBowl();
-actualizarLicuado();
 refrescarSandwich();
 refrescarBaguettes();
 refrescarJugos();
